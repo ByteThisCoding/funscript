@@ -1,8 +1,23 @@
-import { ArFilterAsyncCallback, ArFindAsyncCallback, ArForEachAsyncCallback, ArMapAsyncCallback, ArReduceAsyncCallback, iFunAr } from "../models/fun-ar";
+import { ArFilterAsyncCallback, ArFindAsyncCallback, ArFindIndexAsyncCallback, ArForEachAsyncCallback, ArMapAsyncCallback, ArReduceAsyncCallback, iFunAr } from "../models/fun-ar";
+
+const findIndexSeq = async <T>(input: T[], callback: ArFindIndexAsyncCallback<T>, thisArg?: any): Promise<number> => {
+    let elementIndex: number = -1;
+    let found = false;
+    for (let i = 0; elementIndex === -1 && i < input.length; i++) {
+        if (typeof thisArg !== 'undefined') {
+            found = await callback.bind(thisArg, input[i], i, input)();
+        } else {
+            found = await callback(input[i], i, input);
+        }
+        if (found) {
+            elementIndex = i;
+        }
+    }
+    return elementIndex;
+};
 
 /**
  * Object which will hold async versions of array methods
- * (Yes, I do see the irony in using some imperative programming to implement this)
  */
 export const FunAr: iFunAr = {
     async: {
@@ -15,16 +30,17 @@ export const FunAr: iFunAr = {
              * @returns Promise<void>
              */
             forEach: async <T>(input: T[], callback: ArForEachAsyncCallback<T>, thisArg?: any): Promise<void> => {
-                const promise = Promise.resolve();
-                input.forEach((item, index) => {
-                    if (typeof thisArg !== 'undefined') {
-                        promise.then(callback.bind(thisArg, item, index, input));
-                    } else {
-                        promise.then(() => callback(item, index, input))
-                    }
-                });
-                return promise.then(() => void 0);
+                return input.reduce((promise, item, index) => {
+                    return promise.then(() => {
+                        if (typeof thisArg !== 'undefined') {
+                            return promise.then(callback.bind(thisArg, item, index, input));
+                        } else {
+                            return promise.then(() => callback(item, index, input))
+                        }
+                    });
+                }, Promise.resolve());
             },
+            findIndex: findIndexSeq,
             /**
              * Find an item using an asynchronous callback, returns a promise of the first found item or undefined
              * @param input 
@@ -33,19 +49,8 @@ export const FunAr: iFunAr = {
              * @returns Promise<T | undefined>
              */
             find: async <T>(input: T[], callback: ArFindAsyncCallback<T>, thisArg?: any): Promise<T | undefined> => {
-                let element: T | undefined = void 0;
-                let found = false;
-                for (let i = 0; !found && i < input.length; i++) {
-                    if (typeof thisArg !== 'undefined') {
-                        found = await callback.bind(thisArg, input[i], i, input)();
-                    } else {
-                        found = await callback(input[i], i, input);
-                    }
-                    if (found) {
-                        element = input[i];
-                    }
-                }
-                return element;
+                const index = await findIndexSeq(input, callback, thisArg);
+                return index === -1 ? undefined : input[index];
             },
             /**
              * Asynchronously map the input of an array to a new array, running each callback one after another
@@ -55,18 +60,18 @@ export const FunAr: iFunAr = {
              * @returns Promise<T[]>
              */
             map: async <T>(input: T[], callback: ArMapAsyncCallback<T>, thisArg?: any): Promise<T[]> => {
-                const newAr: T[] = [];
-                for (let i = 0; i < input.length; i++) {
-                    const item = input[i];
-                    let mappedItem: T;
-                    if (typeof thisArg !== 'undefined') {
-                        mappedItem = await callback.bind(thisArg, item, i, input)();
-                    } else {
-                        mappedItem = await callback(item, i, input);
-                    }
-                    newAr.push(mappedItem);
-                }
-                return newAr;
+
+                const onResponse = (partialList: T[], itemResult: T) => [...partialList, itemResult];
+
+                return input.reduce((promise, item, index) => {
+                    return promise.then((partialList: T[]) => {
+                        if (typeof thisArg !== 'undefined') {
+                            return promise.then(callback.bind(thisArg, item, index, input)).then(itemResult => onResponse(partialList, itemResult));
+                        } else {
+                            return promise.then(() => callback(item, index, input)).then(itemResult => onResponse(partialList, itemResult));
+                        }
+                    });
+                }, Promise.resolve([] as T[]));
             },
             /**
              * Asynchronously filter the input of an array to a new array, running each callback one after another
@@ -76,20 +81,17 @@ export const FunAr: iFunAr = {
              * @returns Promise<T[]>
              */
             filter: async <T>(input: T[], callback: ArFilterAsyncCallback<T>, thisArg?: any): Promise<T[]> => {
-                const newAr: T[] = [];
-                for (let i = 0; i < input.length; i++) {
-                    const item = input[i];
-                    let doInclude;
-                    if (thisArg) {
-                        doInclude = await callback.bind(thisArg, item, i, input)();
-                    } else {
-                        doInclude = await callback(item, i, input);
-                    }
-                    if (doInclude) {
-                        newAr.push(item);
-                    }
-                }
-                return newAr;
+                const onResponse = (partialList: T[], item: T, doInclude: boolean) => !doInclude ? partialList : [...partialList, item];
+
+                return input.reduce((promise, item, index) => {
+                    return promise.then((partialList: T[]) => {
+                        if (thisArg) {
+                            return promise.then(callback.bind(thisArg, item, index, input)).then(doInclude => onResponse(partialList, item, doInclude));
+                        } else {
+                            return promise.then(() => callback(item, index, input)).then(doInclude => onResponse(partialList, item, doInclude));
+                        }
+                    });
+                }, Promise.resolve([] as T[]));
             },
             /**
              * Reduce an array asynchronously, invoking each callback sequentially
@@ -99,19 +101,13 @@ export const FunAr: iFunAr = {
              * @returns Promise<A>
              */
             reduce: async <T, A>(input: T[], callback: ArReduceAsyncCallback<T, A>, initialValue?: A): Promise<A> => {
-                let value: T | A = input[0];
-                let startIndex = 1;
-                if (typeof initialValue !== 'undefined') {
-                    value = initialValue;
-                    startIndex = 0;
-                }
-                
-                for (let i=startIndex; i<input.length; i++) {
-                    const item = input[i];
-                    value = await callback(value as A, item, i, input);
-                }
+                const fullInput = typeof initialValue === 'undefined' ? input.slice(1) : input;
+                const firstValue = typeof initialValue === 'undefined' ? input[0] : initialValue;
+                const indexOffset = typeof initialValue === 'undefined' ? 1 : 0;
 
-                return value as A;
+                return fullInput.reduce((promise, item, index) => {
+                    return promise.then(acc => callback(acc as A, item, index + indexOffset))
+                }, Promise.resolve(firstValue as T | A)) as Promise<A>;
             }
         },
         parallel: {
@@ -123,21 +119,13 @@ export const FunAr: iFunAr = {
              * @returns Promise<void>
              */
             forEach: async <T>(input: T[], callback: ArForEachAsyncCallback<T>, thisArg?: any): Promise<void> => {
-                const promises: Promise<any>[] = [];
-
-                input.forEach((item, index) => {
+                return Promise.all(input.reduce((promises, item, index) => {
                     if (typeof thisArg !== 'undefined') {
-                        promises.push((async () => {
-                            return callback.bind(thisArg, item, index, input)()
-                        })());
+                        return [...promises, callback.bind(thisArg)(item, index, input)];
                     } else {
-                        promises.push((async () => {
-                            return callback(item, index, input);
-                        })());
+                        return [...promises, callback(item, index, input)];
                     }
-                });
-
-                return Promise.all(promises).then(() => void 0);
+                }, [] as Promise<any>[])).then(() => void 0);
             },
             /**
              * Asynchronously map the input of an array to a new array, running each callback in parallel

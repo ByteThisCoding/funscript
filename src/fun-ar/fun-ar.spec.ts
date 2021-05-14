@@ -4,7 +4,7 @@ describe("FunAr", () => {
 
     it("should forEach in sequence", async () => {
         let counter = 0;
-        const input = [1, 2, 3, 4, 5];
+        const input = new Array(100000).fill(0).map((_: number, index: number) => index);
         const expectedOutput = input.reduce((acc, item) => acc + item);
 
         await FunAr.async.seq.forEach(input, (item) => counter += item);

@@ -54,6 +54,17 @@ export type ArFindAsync = <T>(
     thisArg?: any
 ) => Promise<T | undefined>;
 
+export type ArFindIndexAsyncCallback<T> = (
+    element: T,
+    index?: number,
+    array?: T[]
+) => boolean | Promise<boolean>;
+export type ArFindIndexAsync = <T>(
+    input: T[],
+    callback: ArFindIndexAsyncCallback<T>,
+    thisArg?: any
+) => Promise<number>;
+
 export interface iFunAr {
     async: {
         seq: {
@@ -62,6 +73,7 @@ export interface iFunAr {
             reduce: ArReduceAsync;
             forEach: ArForEachAsync;
             find: ArFindAsync;
+            findIndex: ArFindIndexAsync;
         };
         parallel: {
             map: ArMapAsync;
