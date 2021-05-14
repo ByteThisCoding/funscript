@@ -74,10 +74,6 @@ function build() {
             `node node_modules/cpy-cli/cli.js readme.md dist`,
             opts
         );
-        execSync(
-            `node node_modules/cpy-cli/cli.js coverage dist/coverage`,
-            opts
-        );
     } catch (err) {
         console.error(`Error copying package.json / readme.md!`, err);
         return 1;

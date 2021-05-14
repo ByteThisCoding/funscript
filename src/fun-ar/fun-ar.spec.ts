@@ -85,4 +85,44 @@ describe("FunAr", () => {
 
     }, 100);
 
+    it("should propogate errors thrown", async () => {
+
+        //simple
+        const message = "Test throw!";
+        const input = [1, 2, 3];
+        const map = (item: number) => {
+            if (item === 2) {
+                throw new Error(message);
+            }
+            return item;
+        };
+        try {
+            await FunAr.async.seq.map(input, map);
+            fail("Error should have been thrown and propogated!");
+        } catch (err) {
+            expect(err.toString().indexOf(message)).toBeGreaterThan(-1);
+        }
+
+        //error thrown in async in async
+        const newMessage = "Test in test throw!";
+        const newInput = [4, 5, 6];
+        const asyncMap = async (item: number) => {
+            const result = await new Promise<number>((resolve, reject) => {
+                if (item === 5) {
+                    reject(newMessage);
+                } else {
+                    resolve(item);
+                }
+            });
+            return result * 2;
+        };
+
+        try {
+            await FunAr.async.seq.map(newInput, asyncMap);
+            fail("Error should have been thrown and propogated!");
+        } catch (err) {
+            expect(err.toString().indexOf(newMessage)).toBeGreaterThan(-1);
+        }
+    });
+
 });
