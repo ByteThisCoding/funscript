@@ -1,0 +1,39 @@
+{
+    "name": "@byte-this/funscript",
+    "version": "1.0.11",
+    "description": "A typescript API which facilitates functional programming.",
+    "main": "public-api.js",
+    "types": "public-api.d.ts",
+    "scripts": {
+        "test": "jest",
+        "test:coverage": "jest --coverage && jest-coverage-badges",
+        "format": "npx prettier --write .",
+        "build": "node build-cli.js build",
+        "publish:npm": "node build-cli.js publish"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ByteThisStore/funscript.git"
+    },
+    "keywords": [
+        "functional",
+        "javascript",
+        "typescript"
+    ],
+    "author": "Byte This!",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ByteThisStore/funscript/issues"
+    },
+    "homepage": "https://github.com/ByteThisStore/funscript#readme",
+    "devDependencies": {
+        "@types/jest": "^26.0.23",
+        "cpy-cli": "^3.1.1",
+        "jest": "^26.6.3",
+        "jest-coverage-badges": "^1.1.2",
+        "prettier": "^2.3.0",
+        "ts-jest": "^26.5.6",
+        "ts-node": "^9.1.1",
+        "typescript": "^4.2.4"
+    }
+}
