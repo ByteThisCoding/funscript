@@ -8,6 +8,6 @@ export function MemoizeMethod(memoizationOptions?: iMemoizationOptions) {
         descriptor: PropertyDescriptor
     ) => {
         const original = descriptor.value;
-        descriptor.value = Memoize(original, memoizationOptions);
+        descriptor.value = Memoize(original.bind(target), memoizationOptions);
     };
 }

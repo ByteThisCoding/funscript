@@ -114,4 +114,37 @@ describe("MemoizeAsync", () => {
         expect(hitCount).toBe(1);
         expect(actual).toBe(expected);
     }, 200);
+
+    it("should memoize and keep 'this' reference in place", async () => {
+        let hitCount = 0;
+
+        const map = (input: number) => Promise.resolve(input * 2);
+        const input = 123;
+        class TestClass {
+
+            @MemoizeAsyncMethod()
+            calc(input: number) {
+                hitCount ++;
+                return this.map(input);
+            }
+
+            private map(input: number) {
+                return map(input);
+            }
+
+        }
+
+        const tester = new TestClass();
+
+        let expected = await map(input);
+        let actual;
+
+        actual = await tester.calc(input);
+        actual = await tester.calc(input);
+        actual = await tester.calc(input);
+
+        expect(hitCount).toBe(1);
+        expect(actual).toBe(expected);
+
+    }, 200);
 });
