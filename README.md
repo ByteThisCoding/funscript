@@ -14,6 +14,12 @@ This library facilitates functional programming practices by offering:
 
 These will aid in creating and working with immutable objects.
 
+## Install
+Library with typescript definitions available as npm package.
+```
+npm install @byte-this/funscript
+```
+
 ## Clone
 
 The `Clone` function is straightforward: it recursively clones an object and returns the new object:
