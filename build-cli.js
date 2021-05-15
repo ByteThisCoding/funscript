@@ -66,14 +66,8 @@ function build() {
         packageJsonStr = JSON.stringify(packageJson, null, 4);
         fs.writeFileSync(jsonFile, packageJsonStr);
 
-        execSync(
-            `node node_modules/cpy-cli/cli.js package.json dist`,
-            opts
-        );
-        execSync(
-            `node node_modules/cpy-cli/cli.js readme.md dist`,
-            opts
-        );
+        execSync(`node node_modules/cpy-cli/cli.js package.json dist`, opts);
+        execSync(`node node_modules/cpy-cli/cli.js readme.md dist`, opts);
     } catch (err) {
         console.error(`Error copying package.json / readme.md!`, err);
         return 1;
@@ -89,10 +83,7 @@ function test() {
         stdio: [0, 1, 2],
     };
     try {
-        execSync(
-            `npm run test:coverage`,
-            opts
-        );
+        execSync(`npm run test:coverage`, opts);
     } catch (err) {
         console.error(`Error running tests, check output above!`);
         return 1;

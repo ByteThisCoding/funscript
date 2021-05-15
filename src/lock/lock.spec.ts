@@ -98,11 +98,8 @@ describe("Lock", () => {
     });
 
     it("should lock with decorator", () => {
-
         class TestClass {
-            constructor() {
-
-            }
+            constructor() {}
 
             @LockArguments
             callMe(object: any): void {
@@ -110,7 +107,7 @@ describe("Lock", () => {
                     object.value = -1;
                     fail(
                         "Error should have been thrown when trying to mutate: " +
-                        object.value
+                            object.value
                     );
                 } catch (err) {
                     expect(object.value).not.toBe(-1);
@@ -119,8 +116,7 @@ describe("Lock", () => {
         }
 
         new TestClass().callMe({
-            value: 1324
+            value: 1324,
         });
-
     });
 });

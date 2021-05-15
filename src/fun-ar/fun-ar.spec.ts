@@ -1,23 +1,23 @@
 import { FunAr } from "./fun-ar";
 
 describe("FunAr", () => {
-
     it("should forEach in sequence", async () => {
         let counter = 0;
-        const input = new Array(100000).fill(0).map((_: number, index: number) => index);
+        const input = new Array(100000)
+            .fill(0)
+            .map((_: number, index: number) => index);
         const expectedOutput = input.reduce((acc, item) => acc + item);
 
-        await FunAr.async.seq.forEach(input, (item) => counter += item);
+        await FunAr.async.seq.forEach(input, (item) => (counter += item));
         expect(counter).toBe(expectedOutput);
     }, 100);
 
     it("should forEach in parallel", async () => {
-
         let counter = 0;
         const input = [1, 2, 3, 4, 5];
         const expectedOutput = input.reduce((acc, item) => acc + item);
 
-        await FunAr.async.parallel.forEach(input, (item) => counter += item);
+        await FunAr.async.parallel.forEach(input, (item) => (counter += item));
         expect(counter).toBe(expectedOutput);
     }, 100);
 
@@ -25,13 +25,16 @@ describe("FunAr", () => {
         const searchItem = 123;
         const input = [1, 2, 3, 4, searchItem, 6];
 
-        const itemFound = await FunAr.async.seq.find(input, (item) => item === searchItem);
+        const itemFound = await FunAr.async.seq.find(
+            input,
+            (item) => item === searchItem
+        );
         expect(itemFound).toBe(searchItem);
     }, 100);
 
     it("should map in sequence", async () => {
         const input = [1, 2, 3, 4, 5];
-        const map = (item: number) => item*item;
+        const map = (item: number) => item * item;
 
         const expected = input.map(map);
 
@@ -41,7 +44,7 @@ describe("FunAr", () => {
 
     it("should map in parallel", async () => {
         const input = [1, 2, 3, 4, 5];
-        const map = (item: number) => item*item;
+        const map = (item: number) => item * item;
 
         const expected = input.map(map);
 
@@ -50,7 +53,6 @@ describe("FunAr", () => {
     }, 100);
 
     it("should filter in sequence", async () => {
-
         const input = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         const filter = (item: number) => item % 2 === 0;
 
@@ -58,11 +60,9 @@ describe("FunAr", () => {
 
         const actual = await FunAr.async.seq.filter(input, filter);
         expect(actual).toEqual(expected);
-
     }, 100);
 
     it("should filter in parallel", async () => {
-
         const input = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         const filter = (item: number) => item % 2 === 0;
 
@@ -70,11 +70,9 @@ describe("FunAr", () => {
 
         const actual = await FunAr.async.parallel.filter(input, filter);
         expect(actual).toEqual(expected);
-
     }, 100);
 
     it("should reduce in sequence", async () => {
-
         const input = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         const reduce = (acc: number, item: number) => acc + item;
 
@@ -82,11 +80,9 @@ describe("FunAr", () => {
 
         const actual = await FunAr.async.seq.reduce(input, reduce);
         expect(actual).toEqual(expected);
-
     }, 100);
 
     it("should propogate errors thrown", async () => {
-
         //simple
         const message = "Test throw!";
         const input = [1, 2, 3];
@@ -124,5 +120,4 @@ describe("FunAr", () => {
             expect(err.toString().indexOf(newMessage)).toBeGreaterThan(-1);
         }
     });
-
 });
