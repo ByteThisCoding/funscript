@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for lock/lock.ts</title>
+    <title>Code coverage report for memoize/memoize.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">lock</a> lock.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">memoize</a> memoize.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>33/33</span>
+                <span class='fraction'>38/38</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">90% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>12/12</span>
+                <span class='fraction'>9/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>33/33</span>
+                <span class='fraction'>38/38</span>
             </div>
         
             
@@ -90,73 +90,85 @@
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">38x</span>
-<span class="cline-any cline-yes">38x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">25x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">38x</span>
-<span class="cline-any cline-yes">38x</span>
-<span class="cline-any cline-yes">38x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">38x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-yes">13x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Clone } from "../clone/clone";
-import { PRIMITIVE_TYPES } from "../domain/primitive-types";
-import { iLock } from "../models/lock";
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span></td><td class="text"><pre class="prettyprint lang-js">import { Equals } from "../equals/equals";
+import { iMemoizationCacheExpirationOptions, iMemoizationOptions, iMemoize } from "../models/memoize";
 &nbsp;
-/**
- * Clone an object, lock it, and return that locked obj
- * @param obj &lt;T&gt;
- * @returns &lt;T&gt;
- */
+export const Memoize: iMemoize = &lt;ParamsType extends any[], ReturnType&gt;(func: (...params: ParamsType) =&gt; ReturnType, options?: iMemoizationOptions): (...params: ParamsType) =&gt; ReturnType =&gt; {
+    const mergedOptions = {
+        ...options
+    };
+    const cache: [ParamsType, ReturnType][] = [];
+    const findCacheIndex = (params: ParamsType) =&gt; {
+        return cache.findIndex(item =&gt; Equals(item[0], params));
+    };
 &nbsp;
-export const Lock: iLock = &lt;T&gt;(obj: T): T =&gt; {
-    return DoLock(obj, true);
-};
+    const setExpireCountdown = (params: ParamsType, expirationOptions: iMemoizationCacheExpirationOptions) =&gt; {
+        const expireEvaluate = expirationOptions.evaluate();
+        const expireInterval = Math.max(1, expirationOptions.type === 'absolute' <span class="branch-0 cbranch-no" title="branch not covered" >? expireEvaluate - +new Date() </span>: expireEvaluate);
 &nbsp;
-function DoLock&lt;T&gt;(obj: T, clone: boolean): T {
-    if (PRIMITIVE_TYPES.indexOf(typeof obj) &gt; -1 || obj === null) {
-        return obj;
-    }
+        setTimeout(() =&gt; {
+            const existingEntryIndex = findCacheIndex(params);
+            cache.splice(existingEntryIndex, 1);
+        }, expireInterval)
+    };
 &nbsp;
-    const cloned = clone ? Clone(obj) : obj;
+    return (...params: ParamsType) =&gt; {
+        const existingEntryIndex = findCacheIndex(params);
+        if (existingEntryIndex &gt; -1)   {
+            return cache[existingEntryIndex][1];
+        } else {
+            const result = func(...params);
+            cache.push([params, result]);
 &nbsp;
-    if (Array.isArray(cloned)) {
-        cloned.forEach((item) =&gt; DoLock(item, false));
-    } else {
-        Object.keys(cloned).forEach((key) =&gt; {
-            //@ts-ignore
-            DoLock(cloned[key], false);
-        });
-    }
-    Object.freeze(cloned);
+            if (mergedOptions.cacheExpiration) {
+                setExpireCountdown(params, mergedOptions.cacheExpiration);
+            }
 &nbsp;
-    return cloned;
-}
-&nbsp;</pre></td></tr></table></pre>
+            return result;
+        }
+    };
+}</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

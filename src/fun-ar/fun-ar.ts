@@ -13,8 +13,15 @@ const findIndexSeq = async <T>(
     callback: ArFindIndexAsyncCallback<T>,
     thisArg?: any
 ): Promise<number> => {
-    const recFind = async (currentIndex: number, callback: ArFindIndexAsyncCallback<T>): Promise<number> => {
-        const isFound = await callback(input[currentIndex], currentIndex, input);
+    const recFind = async (
+        currentIndex: number,
+        callback: ArFindIndexAsyncCallback<T>
+    ): Promise<number> => {
+        const isFound = await callback(
+            input[currentIndex],
+            currentIndex,
+            input
+        );
         if (isFound) {
             return currentIndex;
         } else if (currentIndex === input.length - 1) {
@@ -24,12 +31,11 @@ const findIndexSeq = async <T>(
         }
     };
 
-    if (typeof thisArg !== 'undefined') {
+    if (typeof thisArg !== "undefined") {
         return recFind(0, callback.bind(thisArg));
     } else {
         return recFind(0, callback);
     }
-
 };
 
 /**
@@ -261,15 +267,28 @@ export const FunAr: iFunAr = {
             ): Promise<T[]> => {
                 const filterResults = await Promise.all(
                     input.reduce((promises, item, index) => {
-                        if (typeof thisArg !== 'undefined') {
-                            return [...promises, (async () => callback.bind(thisArg)(item, index, input))()];
+                        if (typeof thisArg !== "undefined") {
+                            return [
+                                ...promises,
+                                (async () =>
+                                    callback.bind(thisArg)(
+                                        item,
+                                        index,
+                                        input
+                                    ))(),
+                            ];
                         } else {
-                            return [...promises, (async () => callback(item, index, input))()];
+                            return [
+                                ...promises,
+                                (async () => callback(item, index, input))(),
+                            ];
                         }
                     }, [] as Promise<boolean>[])
                 );
 
-                return input.filter((_: T, index: number) => filterResults[index]);
+                return input.filter(
+                    (_: T, index: number) => filterResults[index]
+                );
             },
         },
     },
