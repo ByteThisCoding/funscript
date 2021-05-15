@@ -33,14 +33,20 @@ If the object has its own `clone` method, this function will utilize it. Otherwi
 
 ## Lock
 
-The `Lock` function clones an object and freezes all properties on that clone, preventing any further mutation:
+The `Lock` function clones an object and recursively freezes all properties on that clone, preventing any further mutation:
 
 ```javascript
+const oldObj = {
+    property: {
+        a: true,
+        b: false
+    }
+};
 const newObj = Lock(oldObject);
 console.log(oldObject === newObj); //fales
 
 try {
-    newObj.property = false;
+    newObj.property.a = false;
     //if 'strict mode' is not enabled, no error will be thrown
     //but the object field will not be updated
 } catch (err) {
