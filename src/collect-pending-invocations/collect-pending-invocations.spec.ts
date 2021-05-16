@@ -92,4 +92,32 @@ describe("CollectPendingInvocations", () => {
 
         await AwaitAllCollections();
     });
+
+    it("should keep 'this' reference in place", async () => {
+        class TestClass {
+            numCalls = 0;
+
+            @CollectPendingMethodInvocations
+            async add(num: number): Promise<number> {
+                this.numCalls++;
+                await wait(100);
+                return this.map(num);
+            }
+
+            map(num: number) {
+                return num + 1;
+            }
+        }
+
+        const tc = new TestClass();
+
+        let promises = [tc.add(1), tc.add(1), tc.add(2)];
+
+        const returnValues = await Promise.all(promises);
+
+        expect(tc.numCalls).toBe(2);
+        expect(returnValues).toEqual([2, 2, 3]);
+
+        await AwaitAllCollections();
+    }, 100)
 });
