@@ -81,4 +81,10 @@ export interface iFunAr {
             forEach: ArForEachAsync;
         };
     };
+    isSubsetOf<T>(input: T[], of: T[], eq?: (a: T, b: T) => boolean): boolean;
+    isSupersetOf<T>(input: T[], of: T[], eq?: (a: T, b: T) => boolean): boolean;
+    subset<T>(input: T[], startIndex: number, endIndex: number): T[];
+    intersects<T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): boolean;
+    intersection<T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): T[];
+    uniqueValues<T>(input: T[], eq?: (a: T, b: T) => boolean): T[];
 }

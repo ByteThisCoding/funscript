@@ -115,22 +115,19 @@ describe("Memoize", () => {
     });
 
     it("should memoize and keep 'this' reference in place", () => {
-
         let hitCount = 0;
 
         const map = (input: number) => input * 2;
         const input = 123;
         class TestClass {
-
             calc(input: number) {
-                hitCount ++;
+                hitCount++;
                 return this.map(input);
             }
 
             private map(input: number) {
                 return map(input);
             }
-
         }
 
         const tester = new TestClass();
@@ -145,7 +142,6 @@ describe("Memoize", () => {
 
         expect(hitCount).toBe(1);
         expect(actual).toBe(expected);
-
     });
 
     it("should memoize and keep 'this' reference in place for decorator", () => {
@@ -154,17 +150,15 @@ describe("Memoize", () => {
         const map = (input: number) => input * 2;
         const input = 123;
         class TestClass {
-
             @MemoizeMethod()
             calc(input: number) {
-                hitCount ++;
+                hitCount++;
                 return this.map(input);
             }
 
             private map(input: number) {
                 return map(input);
             }
-
         }
 
         const tester = new TestClass();
@@ -178,7 +172,40 @@ describe("Memoize", () => {
 
         expect(hitCount).toBe(1);
         expect(actual).toBe(expected);
-
     });
 
+    it("should memoize and keep 'this' reference in place for decorator with options specified", () => {
+        let hitCount = 0;
+
+        const map = (input: number) => input * 2;
+        const input = 123;
+        class TestClass {
+            @MemoizeMethod({
+                cacheExpiration: {
+                    evaluate: () => 1000,
+                    type: "relative",
+                },
+            })
+            calc(input: number) {
+                hitCount++;
+                return this.map(input);
+            }
+
+            private map(input: number) {
+                return map(input);
+            }
+        }
+
+        const tester = new TestClass();
+
+        let expected = map(input);
+        let actual;
+
+        actual = tester.calc(input);
+        actual = tester.calc(input);
+        actual = tester.calc(input);
+
+        expect(hitCount).toBe(1);
+        expect(actual).toBe(expected);
+    }, 200);
 });

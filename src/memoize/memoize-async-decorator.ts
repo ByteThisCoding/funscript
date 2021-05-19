@@ -9,6 +9,9 @@ export function MemoizeAsyncMethod(memoizationOptions?: iMemoizationOptions) {
         descriptor: PropertyDescriptor
     ) => {
         const original = descriptor.value;
-        descriptor.value = MemoizeAsync(original.bind(target), memoizationOptions);
+        descriptor.value = MemoizeAsync(
+            original.bind(target),
+            memoizationOptions
+        );
     };
 }

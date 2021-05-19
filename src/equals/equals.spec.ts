@@ -126,7 +126,7 @@ describe("Equals", () => {
 
         const tc = [
             [new Date(12345), new Date(12)],
-            [new Date(+now), new Date(+now - 1)],
+            [new Date(+now), new Date(+now - 100)],
             [new Date(+now - 1000), new Date(+now)],
             [new Date(), null],
             [null, new Date()],
@@ -190,14 +190,10 @@ describe("Equals", () => {
     });
 
     it("should process equal arrays with objects", () => {
-
-        const tc = [
-            [[{a: true}], [{a: true}]]
-        ];
+        const tc = [[[{ a: true }], [{ a: true }]]];
 
         tc.forEach((testCase) => {
             expect(Equals(testCase[0], testCase[1])).toBe(true);
         });
-
     });
 });

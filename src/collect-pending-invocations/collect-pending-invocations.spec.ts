@@ -119,5 +119,5 @@ describe("CollectPendingInvocations", () => {
         expect(returnValues).toEqual([2, 2, 3]);
 
         await AwaitAllCollections();
-    }, 100)
+    }, 100);
 });

@@ -12,3 +12,5 @@ export * from "./src/memoize/memoize-decorator";
 export * from "./src/memoize/memoize-async-decorator";
 export * from "./src/collect-pending-invocations/collect-pending-invocations";
 export * from "./src/collect-pending-invocations/collect-pending-invocations-decorator";
+export * from "./src/models/fun-obj";
+export * from "./src/fun-obj/fun-obj";

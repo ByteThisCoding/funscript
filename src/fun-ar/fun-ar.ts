@@ -1,3 +1,5 @@
+import { Compose } from "../compose/compose";
+import { Equals } from "../equals/equals";
 import {
     ArFilterAsyncCallback,
     ArFindAsyncCallback,
@@ -291,5 +293,106 @@ export const FunAr: iFunAr = {
                 );
             },
         },
+    },
+    /**
+     * Return a subset of the input array based on start and end indices
+     * @param input
+     * @param startIndex
+     * @param endIndex
+     * @returns
+     */
+    subset: <T>(input: T[], startIndex: number, endIndex: number): T[] => {
+        return input.slice(startIndex, endIndex);
+    },
+    /**
+     * Check if an array is a subset of another array
+     * @param input
+     * @param of
+     * @param eq
+     * @returns
+     */
+    isSubsetOf: <T>(
+        input: T[],
+        of: T[],
+        eq?: (a: T, b: T) => boolean
+    ): boolean => {
+        const eqFunc = eq ? eq : (a: T, b: T) => a === b;
+
+        const isPartialSubset = (
+            inAr: T[],
+            ofAr: T[],
+            inIndex: number
+        ): boolean => {
+            const has = !!ofAr.find((searchItem: T) =>
+                eqFunc(searchItem, inAr[inIndex])
+            );
+            if (!has) {
+                return false;
+            } else if (inIndex === inAr.length - 1) {
+                return true;
+            } else {
+                return isPartialSubset(inAr, ofAr, inIndex + 1);
+            }
+        };
+        return isPartialSubset(input, of, 0);
+    },
+    /**
+     * Check if an array is a superset of another array
+     * @param input
+     * @param of
+     * @param eq
+     * @returns
+     */
+    isSupersetOf: <T>(
+        input: T[],
+        of: T[],
+        eq?: (a: T, b: T) => boolean
+    ): boolean => {
+        return FunAr.isSubsetOf(of, input, eq);
+    },
+    /**
+     * Get the unique values of an array
+     * @param input
+     * @param eq
+     * @returns
+     */
+    uniqueValues: <T>(input: T[], eq?: (a: T, b: T) => boolean): T[] => {
+        const eqFunc = eq ? eq : (a: T, b: T) => a === b;
+
+        return input.filter(
+            (item, index, ar) =>
+                ar.findIndex((arItem: T) => eqFunc(arItem, item)) === index
+        );
+    },
+    /**
+     * Get the intersection of two arrays
+     * @param a
+     * @param b
+     * @param eq
+     * @returns
+     */
+    intersection: <T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): T[] => {
+        const eqFunc = eq ? eq : (a: T, b: T) => a === b;
+        const filter = <T>(
+            aAr: T[],
+            bAr: T[],
+            eqF: (a: T, b: T) => boolean
+        ): T[] =>
+            aAr.filter((aItem) => !!bAr.find((bItem: T) => eqF(bItem, aItem)));
+
+        return Compose<[a: T[], b: T[], eq: (a: T, b: T) => boolean], T[]>(
+            filter,
+            FunAr.uniqueValues
+        )(a, b, eqFunc);
+    },
+    /**
+     * Check if two arrays intersect
+     * @param a
+     * @param b
+     * @param eq
+     * @returns
+     */
+    intersects: <T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): boolean => {
+        return FunAr.intersection(a, b, eq).length > 0;
     },
 };

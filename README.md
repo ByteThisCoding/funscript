@@ -187,3 +187,14 @@ class TestClass {
     }
 }
 ```
+
+## Other Array Functions
+
+The following functions exist on FunAr and can have custom equality comparators passed in when applicable
+
+-   **uniqueValues**: get the unique values of an array
+-   **subset**: get a subset of an array from the start to end index
+-   **isSubsetOf**: check if an array is a subset of another array
+-   **isSupersetOf**: check if an array is a superset of another array
+-   **intersection**: get the intersection (common values) of two arrays
+-   **intersects**: check if two arrays have any intersection

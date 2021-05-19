@@ -62,6 +62,16 @@ describe("FunAr", () => {
         expect(actual).toEqual(expected);
     }, 100);
 
+    it("should filter in sequence", async () => {
+        const input = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        const filter = (item: number) => item % 2 === 0;
+
+        const expected = input.filter(filter);
+
+        const actual = await FunAr.async.seq.filter(input, filter);
+        expect(actual).toEqual(expected);
+    }, 100);
+
     it("should filter in parallel", async () => {
         const input = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         const filter = (item: number) => item % 2 === 0;
@@ -119,5 +129,109 @@ describe("FunAr", () => {
         } catch (err) {
             expect(err.toString().indexOf(newMessage)).toBeGreaterThan(-1);
         }
+    });
+
+    it("should get the subset of an array", () => {
+        const tc = [
+            {
+                input: [1, 2, 3, 4, 5],
+                startIndex: 1,
+                endIndex: 3,
+                expected: [2, 3],
+            },
+            {
+                input: [1, 2, 3, 4, 5, 6, 7],
+                startIndex: 2,
+                endIndex: 5,
+                expected: [3, 4, 5],
+            },
+        ];
+
+        tc.forEach((tc) => {
+            const actual = FunAr.subset(tc.input, tc.startIndex, tc.endIndex);
+            expect(actual).toEqual(tc.expected);
+        });
+    });
+
+    it("should check if an array is a subset of another array", () => {
+        const tc = [
+            {
+                input: [1, 2, 3],
+                of: [0, 1, 2, 3, 4],
+                expected: true,
+            },
+            {
+                input: [-1, 2, 3],
+                of: [0, 1, 2, 3, 4],
+                expected: false,
+            },
+            {
+                input: [1, 2, 3],
+                of: [2, 3],
+                expected: false,
+            },
+            {
+                input: [4, 5, 6, 7, 8],
+                of: [4, 5, 6, 7, 8],
+                expected: true,
+            },
+        ];
+
+        tc.forEach((tc) => {
+            const actual = FunAr.isSubsetOf(tc.input, tc.of);
+            expect(actual).toEqual(tc.expected);
+        });
+    });
+
+    it("should get the unique values of an array", () => {
+        const tc = [
+            {
+                input: [1, 1, 1],
+                expected: [1],
+            },
+            {
+                input: [1, 2, 3, 4],
+                expected: [1, 2, 3, 4],
+            },
+            {
+                input: [1, 1, 2, 3, 3, 4, 4, 5, 4, 5],
+                expected: [1, 2, 3, 4, 5],
+            },
+        ];
+
+        tc.forEach((tc) => {
+            const actual = FunAr.uniqueValues(tc.input);
+            expect(actual).toEqual(tc.expected);
+        });
+    });
+
+    it("should get the intersection of two arrays", () => {
+        const tc = [
+            {
+                a: [1, 2, 3],
+                b: [2, 3, 4],
+                expected: [2, 3],
+            },
+            {
+                a: [1, 2, 3],
+                b: [4, 5, 6],
+                expected: [],
+            },
+            {
+                a: [1, 2, 3],
+                b: [1, 2, 3],
+                expected: [1, 2, 3],
+            },
+            {
+                a: [1, 1, 2, 3, 3],
+                b: [1, 2, 3],
+                expected: [1, 2, 3],
+            },
+        ];
+
+        tc.forEach((tc) => {
+            const actual = FunAr.intersection(tc.a, tc.b);
+            expect(actual).toEqual(tc.expected);
+        });
     });
 });
