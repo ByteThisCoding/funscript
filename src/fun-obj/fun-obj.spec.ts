@@ -49,44 +49,46 @@ describe("FunObj", () => {
     });
 
     it("should map the values of an object", () => {
-
         const mapFunc = (numInput: number) => numInput * 2;
         const inputObj = {
             a: 12,
             b: 1,
             c: 23432,
-            d: 112
+            d: 112,
         };
 
         const expectedObj = {
             a: mapFunc(12),
             b: mapFunc(1),
             c: mapFunc(23432),
-            d: mapFunc(112)
+            d: mapFunc(112),
         };
 
-        const actualObj = FunObj.kvMap(inputObj, (key, value) => mapFunc(value));
+        const actualObj = FunObj.kvMap(inputObj, (key, value) =>
+            mapFunc(value)
+        );
 
         expect(actualObj).toEqual(expectedObj);
-
     });
 
     it("should reduce an object", () => {
-
         const inputObj = {
             a: 12,
             b: 13,
             c: 14,
-            d: 15
+            d: 15,
         };
 
         const expectedOutput = "a12b13c14d15";
 
-        const actualOutput = FunObj.kvReduce(inputObj, (acc, key, value) => {
-            return acc + key + value;
-        }, "");
+        const actualOutput = FunObj.kvReduce(
+            inputObj,
+            (acc, key, value) => {
+                return acc + key + value;
+            },
+            ""
+        );
 
         expect(actualOutput).toBe(expectedOutput);
-
     });
 });

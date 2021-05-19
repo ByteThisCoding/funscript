@@ -64,10 +64,10 @@ export const FunObj: iFunObj = {
     },
     /**
      * Map the values of an object to a new object with the same keys
-     * @param input 
-     * @param callback 
-     * @param thisArg 
-     * @returns 
+     * @param input
+     * @param callback
+     * @param thisArg
+     * @returns
      */
     kvMap: <ValueType, MappedValueType>(
         input: { [key: string]: ValueType },
@@ -80,20 +80,25 @@ export const FunObj: iFunObj = {
         thisArg?: any
     ): { [key: string]: MappedValueType } => {
         return Object.keys(input).reduce((obj, key, index) => {
-            if (typeof thisArg !== 'undefined') {
-                obj[key] = callback.bind(thisArg)(key, input[key], index, input);
+            if (typeof thisArg !== "undefined") {
+                obj[key] = callback.bind(thisArg)(
+                    key,
+                    input[key],
+                    index,
+                    input
+                );
             } else {
                 obj[key] = callback(key, input[key], index, input);
             }
             return obj;
-        }, {} as {[key: string]: MappedValueType})
+        }, {} as { [key: string]: MappedValueType });
     },
     /**
      * Reduce an object to something else
-     * @param input 
-     * @param callback 
-     * @param initialValue 
-     * @returns 
+     * @param input
+     * @param callback
+     * @param initialValue
+     * @returns
      */
     kvReduce: <ValueType, OutputType>(
         input: { [key: string]: ValueType },
@@ -109,7 +114,7 @@ export const FunObj: iFunObj = {
         const reduceCallback = (acc: any, key: string, index: number): any => {
             return callback(acc, key, input[key], index, input);
         };
-        if (typeof initialValue !== 'undefined') {
+        if (typeof initialValue !== "undefined") {
             return Object.keys(input).reduce(reduceCallback, initialValue);
         } else {
             return Object.keys(input).reduce(reduceCallback) as any;
@@ -117,19 +122,31 @@ export const FunObj: iFunObj = {
     },
     /**
      * Get the list of keys which two objects share in common
-     * @param a 
-     * @param b 
-     * @returns 
+     * @param a
+     * @param b
+     * @returns
      */
-    keysIntersection: (a: {[key: string]: any}, b: {[key:string]: any}): string[] => {
-        return FunAr.intersection(Object.keys(a), Object.keys(b));
+    keysIntersection: (
+        a: { [key: string]: any } | string[],
+        b: { [key: string]: any } | string[]
+    ): string[] => {
+        return FunAr.intersection(
+            Array.isArray(a) ? a : Object.keys(a),
+            Array.isArray(b) ? b : Object.keys(b)
+        );
     },
     /**
      * Check if two objects have any keys in common
-     * @param a 
-     * @param b 
+     * @param a
+     * @param b
      */
-    keysIntersect: (a: {[key: string]: any}, b: {[key:string]: any}): boolean => {
-        return FunAr.intersects(Object.keys(a), Object.keys(b));
-    }
+    keysIntersect: (
+        a: { [key: string]: any } | string[],
+        b: { [key: string]: any } | string[]
+    ): boolean => {
+        return FunAr.intersects(
+            Array.isArray(a) ? a : Object.keys(a),
+            Array.isArray(b) ? b : Object.keys(b)
+        );
+    },
 };

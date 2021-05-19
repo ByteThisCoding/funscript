@@ -40,6 +40,12 @@ export interface iFunObj {
         ) => OutputType,
         initialValue?: OutputType
     ) => OutputType;
-    keysIntersection: (a: {[key: string]: any}, b: {[key:string]: any}) => string[];
-    keysIntersect: (a: {[key: string]: any}, b: {[key:string]: any}) => boolean;
+    keysIntersection: (
+        a: { [key: string]: any } | string[],
+        b: { [key: string]: any } | string[]
+    ) => string[];
+    keysIntersect: (
+        a: { [key: string]: any } | string[],
+        b: { [key: string]: any } | string[]
+    ) => boolean;
 }
