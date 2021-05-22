@@ -7,7 +7,15 @@ export function MemoizeMethod(memoizationOptions?: iMemoizationOptions) {
         propertyKey: string,
         descriptor: PropertyDescriptor
     ) => {
+
+        let thisRef: any;
         const original = descriptor.value;
-        descriptor.value = Memoize(original.bind(target), memoizationOptions);
+        const memoized = Memoize((...args: any[]) => {
+            return original.apply(thisRef, args);
+        }, memoizationOptions);
+        descriptor.value = function(...args: any[]) {
+            thisRef = this;
+            return memoized(...args);
+        }
     };
 }

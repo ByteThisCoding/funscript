@@ -177,9 +177,15 @@ describe("Memoize", () => {
     it("should memoize and keep 'this' reference in place for decorator with options specified", () => {
         let hitCount = 0;
 
+        const offset = 18;
         const map = (input: number) => input * 2;
         const input = 123;
         class TestClass {
+
+            constructor(
+                private offset: number
+            ) {}
+
             @MemoizeMethod({
                 cacheExpiration: {
                     evaluate: () => 1000,
@@ -192,13 +198,13 @@ describe("Memoize", () => {
             }
 
             private map(input: number) {
-                return map(input);
+                return map(input) + this.offset;
             }
         }
 
-        const tester = new TestClass();
+        const tester = new TestClass(offset);
 
-        let expected = map(input);
+        let expected = map(input) + offset;
         let actual;
 
         actual = tester.calc(input);

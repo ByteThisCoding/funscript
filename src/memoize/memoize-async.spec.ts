@@ -178,33 +178,43 @@ describe("MemoizeAsync", () => {
     it("should memoize and keep 'this' reference in place for decorator with options specified", async () => {
         let hitCount = 0;
 
-        const map = (input: number) => Promise.resolve(input * 2);
+        const offset = 123;
+        const map = (input: number): Promise<number> => {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(input * 2), 55)
+            })
+        };
         const input = 123;
         class TestClass {
+
+            constructor(
+                private offset: number
+            ) {}
             @MemoizeAsyncMethod({
                 cacheExpiration: {
-                    evaluate: () => 1000,
+                    evaluate: () => 1000 * 60,
                     type: "relative",
                 },
             })
-            calc(input: number) {
+            calc(input: number): Promise<number> {
                 hitCount++;
-                return this.map(input);
+                return this.thisMap(input);
             }
 
-            private map(input: number) {
-                return map(input);
+            private async thisMap(input: number): Promise<number> {
+                const partialResult = await map(input);
+                return partialResult + this.offset;
             }
         }
 
-        const tester = new TestClass();
+        const tester = new TestClass(offset);
 
-        let expected = await map(input);
+        let expected = (await map(input)) + offset;
         let actual;
 
-        actual = await tester.calc(input);
-        actual = await tester.calc(input);
-        actual = await tester.calc(input);
+        actual = (await tester.calc(input));
+        actual = (await tester.calc(input));
+        actual = (await tester.calc(input));
 
         expect(hitCount).toBe(1);
         expect(actual).toBe(expected);
