@@ -1,13 +1,13 @@
-export type ArMapAsyncCallback<T> = (
-    element: T,
+export type ArMapAsyncCallback<InputT, OutputT> = (
+    element: InputT,
     index?: number,
-    array?: T[]
-) => T | Promise<T>;
-export type ArMapAsync = <T>(
-    input: T[],
-    callback: ArMapAsyncCallback<T>,
+    array?: InputT[]
+) => OutputT | Promise<OutputT>;
+export type ArMapAsync = <InputT, OutputT>(
+    input: InputT[],
+    callback: ArMapAsyncCallback<InputT, OutputT>,
     thisArg?: any
-) => Promise<T[]>;
+) => Promise<OutputT[]>;
 
 export type ArFilterAsyncCallback<T> = (
     element: T,

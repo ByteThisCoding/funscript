@@ -95,18 +95,18 @@ export const FunAr: iFunAr = {
              * @param thisArg
              * @returns Promise<T[]>
              */
-            map: async <T>(
-                input: T[],
-                callback: ArMapAsyncCallback<T>,
+            map: async <InputT, OutputT>(
+                input: InputT[],
+                callback: ArMapAsyncCallback<InputT, OutputT>,
                 thisArg?: any
-            ): Promise<T[]> => {
-                const onResponse = (partialList: T[], itemResult: T) => [
+            ): Promise<OutputT[]> => {
+                const onResponse = (partialList: OutputT[], itemResult: OutputT) => [
                     ...partialList,
                     itemResult,
                 ];
 
                 return input.reduce((promise, item, index) => {
-                    return promise.then((partialList: T[]) => {
+                    return promise.then((partialList: OutputT[]) => {
                         if (typeof thisArg !== "undefined") {
                             return promise
                                 .then(
@@ -123,7 +123,7 @@ export const FunAr: iFunAr = {
                                 );
                         }
                     });
-                }, Promise.resolve([] as T[]));
+                }, Promise.resolve([] as OutputT[]));
             },
             /**
              * Asynchronously filter the input of an array to a new array, running each callback one after another
@@ -225,14 +225,14 @@ export const FunAr: iFunAr = {
              * @param thisArg
              * @returns Promise<T[]>
              */
-            map: async <T>(
-                input: T[],
-                callback: ArMapAsyncCallback<T>,
+            map: async <InputT, OutputT>(
+                input: InputT[],
+                callback: ArMapAsyncCallback<InputT, OutputT>,
                 thisArg?: any
-            ): Promise<T[]> => {
+            ): Promise<OutputT[]> => {
                 return Promise.all(
                     input.reduce(
-                        (promises: Promise<T>[], item: T, index: number) => {
+                        (promises: Promise<OutputT>[], item: InputT, index: number) => {
                             if (typeof thisArg !== "undefined") {
                                 return [
                                     ...promises,
@@ -251,7 +251,7 @@ export const FunAr: iFunAr = {
                                 ];
                             }
                         },
-                        [] as Promise<T>[]
+                        [] as Promise<OutputT>[]
                     )
                 );
             },
