@@ -5,6 +5,8 @@
 ![Coverage branches](./coverage/badge-branches.svg)
 ![Coverage statements](./coverage/badge-statements.svg)
 
+**For details + info on how to use:** https://bytethisstore.com/articles/pg/funscript
+
 This library facilitates functional programming practices by offering:
 
 -   recursive object cloning
