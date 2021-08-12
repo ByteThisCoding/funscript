@@ -24,18 +24,27 @@ export const MemoizeAsync: iMemoizeAsync = <
         params: ParamsType,
         expirationOptions: iMemoizationCacheExpirationOptions
     ) => {
-        const expireEvaluate = expirationOptions.evaluate();
-        const expireInterval = Math.max(
-            1,
-            expirationOptions.type === "absolute"
-                ? expireEvaluate - +new Date()
-                : expireEvaluate
-        );
-
-        setTimeout(() => {
+        const clearCacheEntry = () => {
             const existingEntryIndex = findCacheIndex(params);
             cache.splice(existingEntryIndex, 1);
-        }, expireInterval);
+        };
+
+        switch (expirationOptions.type) {
+            case "absolute":
+            case "relative":
+                const expireEvaluate = expirationOptions.evaluate() as number;
+                const expireInterval = Math.max(
+                    1,
+                    expirationOptions.type === "absolute"
+                        ? expireEvaluate - +new Date()
+                        : expireEvaluate
+                );
+                setTimeout(clearCacheEntry, expireInterval);
+                break;
+            case "promise-resolution":
+                (expirationOptions.evaluate() as Promise<void>).then(clearCacheEntry);
+                break;
+        }
     };
 
     return async (...params: ParamsType) => {

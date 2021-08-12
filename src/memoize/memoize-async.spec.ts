@@ -1,6 +1,6 @@
-import { Memoize } from "./memoize";
 import { MemoizeAsync } from "./memoize-async";
 import { MemoizeAsyncMethod } from "./memoize-async-decorator";
+import { EventEmitter } from "events";
 
 describe("MemoizeAsync", () => {
     it("should memoize in basic scenario", async () => {
@@ -219,4 +219,104 @@ describe("MemoizeAsync", () => {
         expect(hitCount).toBe(1);
         expect(actual).toBe(expected);
     }, 200);
+
+    it("should expire cache with promise based expiration", async () => {
+
+        const eventEmitter = new EventEmitter();
+
+        const promiseExpire = () => {
+            return new Promise<void>(resolve => {
+                eventEmitter.addListener('invalidate', () => {
+                    resolve();
+                });
+            });
+        }
+        let hitCount = 0;
+
+        const input = 12;
+        const map = (input: number) => input * 2;
+        const calc = (input: number) => {
+            hitCount++;
+            return Promise.resolve(map(input));
+        };
+
+        let expected = map(input);
+        let actual;
+
+        const memoized = MemoizeAsync(calc, {
+            cacheExpiration: {
+                evaluate: promiseExpire,
+                type: "promise-resolution",
+            },
+        });
+        actual = await memoized(input);
+        actual = await memoized(input);
+        actual = await memoized(input);
+
+        expect(hitCount).toBe(1);
+        expect(actual).toBe(expected);
+
+        eventEmitter.emit("invalidate");
+        await new Promise(r => setImmediate(r));
+
+        actual = await memoized(input);
+
+        expect(hitCount).toBe(2);
+        expect(actual).toBe(expected);
+        
+
+    }, 200);
+
+    it("should expire cache with promise based expiration multiple times", async () => {
+
+        const eventEmitter = new EventEmitter();
+
+        const promiseExpire = () => {
+            return new Promise<void>(resolve => {
+                eventEmitter.addListener('invalidate', () => {
+                    resolve();
+                });
+            });
+        }
+        let hitCount = 0;
+
+        const input = 12;
+        const map = (input: number) => input * 2;
+        const calc = (input: number) => {
+            hitCount++;
+            return Promise.resolve(map(input));
+        };
+
+        let expected = map(input);
+        let actual;
+
+        const memoized = MemoizeAsync(calc, {
+            cacheExpiration: {
+                evaluate: promiseExpire,
+                type: "promise-resolution",
+            },
+        });
+        actual = await memoized(input);
+        actual = await memoized(input);
+        actual = await memoized(input);
+
+        expect(hitCount).toBe(1);
+        expect(actual).toBe(expected);
+
+        eventEmitter.emit("invalidate");
+        await new Promise(r => setImmediate(r));
+
+        actual = await memoized(input);
+
+        eventEmitter.emit("invalidate");
+        await new Promise(r => setImmediate(r));
+
+        actual = await memoized(input);
+
+        expect(hitCount).toBe(3);
+        expect(actual).toBe(expected);
+        
+
+    }, 200);
+
 });

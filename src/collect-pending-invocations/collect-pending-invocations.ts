@@ -1,4 +1,5 @@
-import EventEmitter from "eventemitter3";
+//import EventEmitter from "eventemitter3";
+import EventEmitter from "events";
 import { Clone } from "../clone/clone";
 import { Equals } from "../equals/equals";
 import { iCollectPendingInvocations } from "../models/collect-pending-invocations";
