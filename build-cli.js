@@ -1,8 +1,11 @@
-const execSync = require("child_process").execSync;
-const fs = require("fs");
+import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
 
 let args = process.argv;
 args.splice(0, 2);
+
+const __dirname = path.resolve();
 
 const command = args[0].toLowerCase().trim();
 let exitCode;
