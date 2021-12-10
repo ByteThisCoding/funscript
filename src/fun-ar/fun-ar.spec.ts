@@ -106,7 +106,7 @@ describe("FunAr", () => {
             await FunAr.async.seq.map(input, map);
             fail("Error should have been thrown and propogated!");
         } catch (err) {
-            expect(err.toString().indexOf(message)).toBeGreaterThan(-1);
+            expect((err as any).toString().indexOf(message)).toBeGreaterThan(-1);
         }
 
         //error thrown in async in async
@@ -127,7 +127,7 @@ describe("FunAr", () => {
             await FunAr.async.seq.map(newInput, asyncMap);
             fail("Error should have been thrown and propogated!");
         } catch (err) {
-            expect(err.toString().indexOf(newMessage)).toBeGreaterThan(-1);
+            expect((err as any).toString().indexOf(newMessage)).toBeGreaterThan(-1);
         }
     });
 
