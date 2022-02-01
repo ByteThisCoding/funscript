@@ -1,5 +1,4 @@
 import {
-    AwaitAllCollections,
     CollectPendingInvocations,
 } from "./collect-pending-invocations";
 import { CollectPendingMethodInvocations } from "./collect-pending-invocations-decorator";
@@ -31,8 +30,6 @@ describe("CollectPendingInvocations", () => {
         } catch (err) {
             expect(err).toBeTruthy();
         }
-
-        await AwaitAllCollections();
     });
 
     it("should intercept method call with no parameters", async () => {
@@ -47,8 +44,6 @@ describe("CollectPendingInvocations", () => {
         await Promise.all(promises);
 
         expect(numCalls).toBe(1);
-
-        await AwaitAllCollections();
     });
 
     it("should intercept method call with parameters", async () => {
@@ -65,8 +60,6 @@ describe("CollectPendingInvocations", () => {
 
         expect(numCalls).toBe(2);
         expect(returnValues).toEqual([2, 2, 3]);
-
-        await AwaitAllCollections();
     });
 
     it("should intercept as method decorator", async () => {
@@ -89,8 +82,6 @@ describe("CollectPendingInvocations", () => {
 
         expect(tc.numCalls).toBe(2);
         expect(returnValues).toEqual([2, 2, 3]);
-
-        await AwaitAllCollections();
     });
 
     it("should keep 'this' reference in place", async () => {
@@ -117,7 +108,5 @@ describe("CollectPendingInvocations", () => {
 
         expect(tc.numCalls).toBe(2);
         expect(returnValues).toEqual([2, 2, 3]);
-
-        await AwaitAllCollections();
     }, 100);
 });

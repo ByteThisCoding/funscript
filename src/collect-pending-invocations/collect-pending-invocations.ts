@@ -1,54 +1,148 @@
-//import EventEmitter from "eventemitter3";
-import EventEmitter from "events";
+
 import { Clone } from "../clone/clone";
 import { Equals } from "../equals/equals";
 import { iCollectPendingInvocations } from "../models/collect-pending-invocations";
 
-interface iPending {
-    func: Function;
-    args: Array<any>;
+interface iPendingArgs {
+    args: any[];
     promise: Promise<any>;
 }
 
-const eventEmitter = new EventEmitter();
+interface iPending extends iPendingArgs {
+    func: Function;
+}
 
-const findPendingIndex = (func: Function, ...params: any): number => {
-    return pending.findIndex(
-        (item) => item.func === func && Equals(params, [item.args])
-    );
-};
+// map pending function calls, function => params[]
+class ListNode {
+    public next: ListNode | null = null;
+    constructor(
+        public readonly value: iPendingArgs
+    ) {}
+}
+class ArgsLinkedList {
+    head: ListNode | null = null;
 
-const findPendingItem = (
-    func: Function,
-    ...params: any
-): iPending | undefined => {
-    return pending.find(
-        (item) => item.func === func && Equals(params, [item.args])
-    );
-};
-
-const addPendingItem = (
-    func: Function,
-    args: any[],
-    promise: Promise<any>
-): void => {
-    pending.push({
-        func,
-        args: args,
-        promise,
-    });
-    eventEmitter.emit("update", pending.length);
-};
-
-const removePendingItem = (func: Function, args: any[]): void => {
-    const finishedInd = findPendingIndex(func, args);
-    if (finishedInd > -1) {
-        pending.splice(finishedInd, 1);
-        eventEmitter.emit("update", pending.length);
+    constructor(
+        pending: iPendingArgs
+    ) {
+        this.head = new ListNode(pending);
     }
-};
 
-const pending: Array<iPending> = [];
+    findInList(args: any[]): iPendingArgs | null {
+        let node = this.head;
+
+        while (node) {
+            if (Equals(node.value.args, args)) {
+                return node.value;
+            }
+            node = node.next;
+        }
+
+        return null;
+    }
+
+    addToList(pending: iPendingArgs): void {
+        const newNode = new ListNode(pending);
+        newNode.next = this.head;
+        this.head = newNode;
+    }
+
+    deleteFromList(args: any[]): { itemRemoved: boolean; listIsEmpty: boolean; } {
+        let prevNode: ListNode | null = null;
+        let node = this.head;
+
+        while (node) {
+            if (Equals(node.value.args, args)) {
+                if (prevNode) {
+                    prevNode.next = node.next;
+                    return {
+                        itemRemoved: true,
+                        listIsEmpty: false
+                    };
+                } else if (!node.next) {
+                    this.head = null;
+                    return {
+                        itemRemoved: true,
+                        listIsEmpty: true
+                    };
+                } else {
+                    this.head = node.next;
+                    return {
+                        itemRemoved: true,
+                        listIsEmpty: false
+                    };
+                }
+            }
+            prevNode = node;
+            node = node.next;
+        }
+
+        return {
+            itemRemoved: false,
+            listIsEmpty: false
+        };
+    }
+}
+
+class PendingCallsContainer {
+
+    private funcMap = new Map<Function, ArgsLinkedList>();
+    private size = 0;
+
+    constructor() { }
+
+    findPendingItem(func: Function, params: any[]): iPending | void {
+        const argList = this.funcMap.get(func);
+        if (!argList) {
+            return void 0;
+        }
+
+        const pendingArgs = argList.findInList(params);
+        if (!pendingArgs) {
+            return void 0;
+        }
+
+        return {
+            func,
+            ...pendingArgs
+        }
+    }
+
+    addPendingItem(
+        func: Function,
+        args: any[],
+        promise: Promise<any>
+    ): void {
+        if (!this.funcMap.has(func)) {
+            this.funcMap.set(func, new ArgsLinkedList({ args, promise }));
+        } else {
+            this.funcMap.get(func)!.addToList({ args, promise });
+        }
+        this.size++;
+        if (this.size > 1_000) {
+            console.log("DEBUG issue");
+        }
+    }
+
+    removePendingItem(func: Function, args: any[]): void {
+        const funcPending = this.funcMap.get(func);
+        if (!funcPending) {
+            return;
+        }
+
+        const { itemRemoved, listIsEmpty } = funcPending.deleteFromList(args);
+        if (itemRemoved) {
+            this.size --;
+        }
+
+        if (listIsEmpty) {
+            this.funcMap.delete(func);
+        }
+    }
+
+}
+
+const pendingCollection = new PendingCallsContainer();
 
 export const CollectPendingInvocations: iCollectPendingInvocations = <
     ParamsType extends any[],
@@ -61,16 +155,16 @@ export const CollectPendingInvocations: iCollectPendingInvocations = <
             //@ts-ignore
             const me = this;
             const clonedParams = Clone(params);
-            const pendingItem = findPendingItem(func, params);
+            const pendingItem = pendingCollection.findPendingItem(func, params);
             if (pendingItem) {
                 return pendingItem.promise as Promise<ReturnType>;
             } else {
                 const promise = func.apply(me, clonedParams);
-                addPendingItem(func, clonedParams, promise);
+                pendingCollection.addPendingItem(func, clonedParams, promise);
                 promise
-                    .catch(() => {})
+                    .catch(() => { })
                     .finally(() => {
-                        removePendingItem(func, clonedParams);
+                        pendingCollection.removePendingItem(func, clonedParams);
                     });
                 return promise;
             }
@@ -81,18 +175,4 @@ export const CollectPendingInvocations: iCollectPendingInvocations = <
     };
 
     return decorated;
-};
-
-//useful for unit test purposes
-export const AwaitAllCollections = () => {
-    if (pending.length === 0) {
-        return Promise.resolve(void 0);
-    }
-    return new Promise((resolve) => {
-        eventEmitter.on("update", (len) => {
-            if (len === 0) {
-                resolve(void 0);
-            }
-        });
-    });
 };
