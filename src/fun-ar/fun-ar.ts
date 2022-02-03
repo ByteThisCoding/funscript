@@ -41,6 +41,25 @@ const findIndexSeq = async <T>(
 };
 
 /**
+ * Shuffle an array in place
+ */
+const shuffleInPlace = <T>(array: T[]): void => {
+    let currentIndex = array.length, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+}
+
+/**
  * Object which will hold async versions of array methods
  */
 export const FunAr: iFunAr = {
@@ -395,4 +414,16 @@ export const FunAr: iFunAr = {
     intersects: <T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): boolean => {
         return FunAr.intersection(a, b, eq).length > 0;
     },
+    /**
+     * Shuffle an array in place
+     */
+    shuffleInPlace,
+    /**
+     * Make a copy of an array and shuffle the copy
+     */
+    shuffle: <T>(input: T[]): T[] => {
+        const clone = [...input];
+        shuffleInPlace(clone);
+        return clone;
+    }
 };

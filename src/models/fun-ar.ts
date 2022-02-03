@@ -87,4 +87,6 @@ export interface iFunAr {
     intersects<T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): boolean;
     intersection<T>(a: T[], b: T[], eq?: (a: T, b: T) => boolean): T[];
     uniqueValues<T>(input: T[], eq?: (a: T, b: T) => boolean): T[];
+    shuffleInPlace<T>(input: T[]): void;
+    shuffle<T>(input: T[]): T[];
 }
