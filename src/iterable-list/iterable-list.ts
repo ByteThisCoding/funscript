@@ -6,6 +6,13 @@ import { IterableList } from "../models/iterable-list";
 export class IterableListUtil {
 
     /**
+     * Check if the input is an iterable type
+     */
+    static isIterableList(item: any): boolean {
+        return item instanceof Set || Array.isArray(item);
+    }
+
+    /**
      * Check if the list includes an item
      */
     static includes<T>(list: IterableList<T>, item: T): boolean {
@@ -17,8 +24,6 @@ export class IterableListUtil {
 
     /**
      * Given two iterables, return their intersection
-     * @param a 
-     * @param b 
      */
     static intersectionOf<T>(a: IterableList<T>, b: IterableList<T>): Set<T> {
         // if only one is a set, we want to make that the lookup item
