@@ -14,3 +14,6 @@ export * from "./src/collect-pending-invocations/collect-pending-invocations";
 export * from "./src/collect-pending-invocations/collect-pending-invocations-decorator";
 export * from "./src/models/fun-obj";
 export * from "./src/fun-obj/fun-obj";
+
+export * from "./src/models/iterable-list";
+export * from "./src/iterable-list/iterable-list";

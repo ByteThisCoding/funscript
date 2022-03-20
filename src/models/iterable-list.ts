@@ -1,0 +1,1 @@
+export type IterableList<T> = Array<T> | Set<T>;
