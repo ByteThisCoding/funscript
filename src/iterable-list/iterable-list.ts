@@ -22,6 +22,22 @@ export class IterableListUtil {
         return list.includes(item);
     }
 
+    static join<T>(list: IterableList<T>, sep: string): string {
+        let str = "";
+        for (const item of list) {
+            str += item+sep;
+        }
+        return str;
+    }
+
+    static firstElement<T>(list: IterableList<T>): T | undefined {
+        // return the first element
+        for (const el of list) {
+            return el;
+        }
+        return void 0;
+    }
+
     /**
      * Given two iterables, return their intersection
      */
