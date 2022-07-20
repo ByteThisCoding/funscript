@@ -19,7 +19,16 @@ class ListNode {
         public readonly value: iPendingArgs
     ) {}
 }
-class ArgsLinkedList {
+
+interface iArgsList {
+    findInList(args: any[]): iPendingArgs | null;
+
+    addToList(pending: iPendingArgs): void;
+
+    deleteFromList(args: any[]): { itemRemoved: boolean; listIsEmpty: boolean; }
+}
+
+class ArgsLinkedList implements iArgsList {
     head: ListNode | null = null;
 
     constructor(
@@ -84,9 +93,10 @@ class ArgsLinkedList {
     }
 }
 
+
 class PendingCallsContainer {
 
-    private funcMap = new Map<Function, ArgsLinkedList>();
+    private funcMap = new Map<Function, iArgsList>();
     private size = 0;
 
     constructor() { }
